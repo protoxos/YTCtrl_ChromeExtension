@@ -1,0 +1,26 @@
+body {
+  width: 200px;
+  height: 200px;
+}
+
+h2 {
+  font-size: 14pt;
+}
+
+h1 {
+  font-size: 20pt;
+  font-family: monospace;
+}
+
+button {
+  width: 150px;
+  font-size: 16pt;
+  color: #FFF;
+  background-color: #045304;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #045f04;
+}
