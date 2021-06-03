@@ -1,52 +1,38 @@
 // Initialize butotn with users's prefered color
-let GenBtn = document.getElementById("genbtn");
-let Token = document.getElementById("token");
+let btnGetToken = document.getElementById("get-token");
+let btnReloadToken = document.getElementById("reload-token");
+let txtToken = document.getElementById("token");
 
-GenBtn.addEventListener("click", async () => {
-  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const isYT = tab.url.indexOf('www.youtube.com') >= 0;
+btnReloadToken.addEventListener("click", () => {
 
-  document.querySelector('.content.onyt').style.display = isYT ? 'block': 'none';
-  document.querySelector('.content.other').style.display = !isYT ? 'block': 'none';
+  chrome.storage.local.set({token: randomNumber(8)});
 
-  if(isYT) {
-
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id, allFrames: true },
-      function: reloadToken
-    }, function(res) {
-
-      chrome.tabs.sendMessage(tab.id, {"message": "giveMeYourToken"}, (res) => {
-        GenBtn.innerHTML = res;
-      });
-
-    });
-  }
+  chrome.storage.local.get('token', function(result) {
+    txtToken.innerHTML = result.token;
+  });
 
 });
-function load() {
 
-  let [tab] = chrome.tabs.query({ active: true, currentWindow: true });
-  const isYT = tab.url.indexOf('www.youtube.com') >= 0;
+btnGetToken.addEventListener("click", () => {
 
-  document.querySelector('.content.onyt').style.display = isYT ? 'block': 'none';
-  document.querySelector('.content.other').style.display = !isYT ? 'block': 'none';
+  chrome.storage.local.get('token', function(result) {
+    txtToken.innerHTML = result.token; 
+  });
 
-  if(isYT) {
-    chrome.tabs.sendMessage(tab.id, {"message": "giveMeYourToken"}, (res) => {
-      GenBtn.innerHTML = res;
-    });
-  }
+});
 
-};
 
-// The body of this function will be execuetd as a content script inside the
-// current page
+function randomNumber(length) {
+  let num = '';
+  for(let i = 0; i < length; i++)
+      num += (Math.floor(Math.random() * 9) + 0).toString();
+
+  return num;
+}
 function reloadToken() {
   const token = randomNumber(8);
   localStorage.setItem('YTCtrl.Token', token);
 }
-
 function setToken() {
   YTCTRL_TOKEN = localStorage.getItem('YTCtrl.Token');
 
@@ -56,6 +42,11 @@ function setToken() {
   }
 
 }
-setTimeout(() => {
-  load()
-}, 500);
+
+chrome.storage.local.get('token', function(result) {
+  if(result.token)
+    txtToken.innerHTML = result.token;
+  else
+    txtToken.innerHTML = '--------';
+
+});
